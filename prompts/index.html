@@ -225,5 +225,16 @@ function escapeHTML(str) {
     return element.innerHTML;
 }
 </script>
+
+  <script>// In parent window
+iframe.contentWindow.postMessage('copyText', '*');
+
+// In iframe
+window.addEventListener('message', (event) => {
+  if (event.data === 'copyText') {
+    navigator.clipboard.writeText('Your text here');
+  }
+});
+</script>
 </body>
 </html>
