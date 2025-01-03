@@ -35,7 +35,8 @@
           <button class="btn btn-secondary mt-2" id="copyButton">
             <i class="fas fa-copy"></i> Copy
           </button> 
-          <a href="https://chatgpt.com" class="btn btn-outline-secondary mt-2">Start chat</a>
+          <button class="btn btn-outline-secondary mt-2" onclick="myFunction()">Start chat</button>
+          
         </div>
       </div>
     </div>
@@ -66,7 +67,7 @@
           <button class="btn btn-secondary mt-2" id="copyButton">
             <i class="fas fa-copy"></i> Copy
           </button> 
-          <a href="https://chatgpt.com" class="btn btn-outline-secondary mt-2">Add prompt</a>
+          <button class="btn btn-outline-secondary mt-2" onclick="myFunction()">Add prompt</button>
         </div>
       </div>
     </div>
@@ -280,6 +281,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Adjust other tab functionality as needed...
 });
 
+</script>
+
+  <script>
+function myFunction() {
+  window.open("https://chatgpt", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=400,left=250,width=900,height=900");
+}
 </script>
 </body>
 </html>
