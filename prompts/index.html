@@ -164,7 +164,10 @@ copyButtons.forEach(button => {
   });
 });
 
-
+// Initialize popovers for Bootstrap
+$(document).ready(() => {
+  $('[data-toggle="popover"]').popover({ trigger: 'manual' });
+});
 
     // Checklist Functionality for Tab 2 (Toggle Grayed-Out Text)
     const checkboxes = document.querySelectorAll('.tab2Checkbox');
