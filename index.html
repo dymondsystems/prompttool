@@ -29,7 +29,8 @@
           </button>
         </div>
         <div class="modal-body">
-          <textarea id="modalContent" class="form-control" rows="4"></textarea>
+          <textarea id="modalContent" class="form-control" rows="4">From now on if the prompt contains a chat id number like this (chatid#1234 example prompt) update memory for the unique number and everything inside the brackets. If I give you the id number in a new prompt, find that id number and update your memory from that point.
+          </textarea>
           <button class="btn btn-secondary mt-2" id="copyButton">
             <i class="fas fa-copy"></i> Copy
           </button> 
@@ -90,7 +91,7 @@
   </div>
 </div>
 <div class="container text-center">
-<a href="/prompttool/prompts" class="btn btn-success" style="margin-top: 10px; margin-bottom: 30px;">Go to prompts</a>
+<a href="#" class="btn btn-success" style="margin-top: 10px; margin-bottom: 30px;">Go to prompts</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -206,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const newInput = document.createElement("div");
     newInput.className = "input-group mb-2";
     newInput.innerHTML = `
-      <textarea class="form-control" rows="2"></textarea>
+      <textarea class="form-control" rows="6" placeholder="Enter prompt"></textarea>
       <div class="input-group-append">
         <button class="btn btn-danger removeInput" type="button">Remove</button>
       </div>
