@@ -32,7 +32,7 @@
           <textarea class="form-control" rows="4">From now on if the prompt contains a chat id number like this (chatid#1234 example prompt) update memory for the unique number and everything inside the brackets. 
             If I give you the id number in a new prompt, find that id number, remember that prompt, remember the responses that follow from that point. UPDATE MEMORY
           </textarea>
-          <button class="btn btn-secondary mt-2" id="copyButton">
+          <button class="btn btn-secondary mt-2" id="copyButton2">
             <i class="fas fa-copy"></i> Copy
           </button> 
           <button class="btn btn-outline-secondary mt-2" onclick="myFunction()">Start chat</button>
@@ -229,6 +229,22 @@ document.getElementById('copyButton').addEventListener('click', () => {
 });
 
 </script>
+<script>
+// Copy Button in copyModal2
+document.getElementById('copyButton2').addEventListener('click', () => {
+  const modalContent = document.getElementById('copyModal2').querySelector('textarea');
+  modalContent.select();
+  document.execCommand('copy');
+
+  const copyButton = document.getElementById('copyButton2');
+  $(copyButton).attr('data-toggle', 'popover');
+  $(copyButton).attr('data-content', 'Copied!');
+  $(copyButton).popover('show');
+  setTimeout(() => $(copyButton).popover('hide'), 1000);
+});
+</script>
+
+  
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
