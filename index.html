@@ -14,11 +14,11 @@
 </div>
 <div class="container border mt-4 p-4">
   <!-- Top Button -->
-  <button class="btn btn-primary mb-4" data-toggle="modal" data-target="#copyModal">Starting prompt</button>
-
-
-  <!-- Modal -->
-  <div class="modal fade" id="copyModal" tabindex="-1" role="dialog">
+  <button class="btn btn-primary mb-4" data-toggle="modal" data-target="#copyModal2">Starting prompt</button>
+  
+  
+   <!-- Modal -->
+  <div class="modal fade" id="copyModal2" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -29,12 +29,43 @@
           </button>
         </div>
         <div class="modal-body">
-          <textarea id="modalContent" class="form-control" rows="4">UPDATE MEMORY: From now on if the prompt contains a chat id number like this (chatid#1234 example prompt) update memory for the unique number and everything inside the brackets. If I give you the id number in a new prompt, find that id number and update your memory from that point.
+          <textarea class="form-control" rows="4">From now on if the prompt contains a chat id number like this (chatid#1234 example prompt) update memory for the unique number and everything inside the brackets. If I give you the id number in a new prompt, find that id number and update your memory from that point.
           </textarea>
           <button class="btn btn-secondary mt-2" id="copyButton">
             <i class="fas fa-copy"></i> Copy
           </button> 
-          <a href="https://chatgpt.com" target="_blank"  class="btn btn-outline-secondary mt-2">Start chat</a>
+          <a href="https://chatgpt.com" class="btn btn-outline-secondary mt-2">Start chat</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="copyModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New prompt</h5>
+          
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <textarea id="modalContent" class="form-control" rows="4">
+          </textarea>
+          <button class="btn btn-secondary mt-2" id="copyButton">
+            <i class="fas fa-copy"></i> Copy
+          </button> 
+          <a href="https://chatgpt.com" class="btn btn-outline-secondary mt-2">Add prompt</a>
         </div>
       </div>
     </div>
