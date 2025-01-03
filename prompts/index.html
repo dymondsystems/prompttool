@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="mb-3">
                 <div class="d-flex align-items-start">
                   ${item.chatIds.length > 1 ? `<input type="checkbox" class="mr-2 tab2Checkbox">` : ''}
-                  <p class="flex-grow-1 text-container">${text}</p>
+                 <p class="flex-grow-1 text-container" id="textElement">${escapeHTML(text)}</p>
                 </div>
                 <div class="d-flex align-items-center">
                   <input type="text" class="form-control mr-2" value="${item.chatIds[idx]}" readonly>
@@ -208,6 +208,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Search input event listener
   searchInput.addEventListener('input', () => renderCards());
 });
+</script>
+
+  <script>
+   // Function to escape HTML characters
+function escapeHTML(str) {
+    var element = document.createElement('div');
+    if (str) {
+        element.innerText = str;
+        element.textContent = str;
+    }
+    return element.innerHTML;
+}
 </script>
 </body>
 </html>
