@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompts</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<div class="container mt-4">
+  <h1 class="mb-4 text-center">My Prompts</h1>
+<a href="/prompttool" class="btn btn-success" style="margin-top: 10px; margin-bottom: 30px;">New prompt</a>
+  <!-- Search Bar for Filtering Cards -->
+  <div class="mb-3">
+    <input type="text" id="searchInput" class="form-control" placeholder="Search prompts...">
+  </div>
+
+  <div class="container">
+    <!-- Cards will be dynamically added here -->
+    <div id="cardsContainer"></div>
+  </div>
+</div>
+
+<!-- Modal for Editing Titles -->
+<div class="modal fade" id="editTitleModal" tabindex="-1" role="dialog" aria-labelledby="editTitleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editTitleModalLabel">Edit Card Title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="newCardTitle" class="form-control" placeholder="Enter new title">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="saveTitleBtn">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('cardsContainer');
+  const searchInput = document.getElementById('searchInput');
+  const data = JSON.parse(localStorage.getItem('page1Data')) || [];
+
+  let cardToEditIndex = -1;  // Index of the card being edited
+
+  // Function to render cards
+  function renderCards() {
+    container.innerHTML = ''; // Clear the container
+
+    const filteredData = filterCardsBySearch();
+
+    filteredData.forEach((item, index) => {
+      // Create card structure
+      const cardId = `cardContent${index}`; // Unique ID for collapse content
+      const card = document.createElement('div');
+      card.className = 'card mb-3';
+      card.innerHTML = `
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>${item.title}</h5>
+          <div>
+            <button class="btn btn-light btn-sm toggleCollapse" data-target="#${cardId}">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="btn btn-light btn-sm editTitle" data-index="${index}">
+              <i class="fas fa-edit"></i> Edit Title
+            </button>
+            <button class="btn btn-danger btn-sm deleteCard" data-index="${index}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+        <div id="${cardId}" class="collapse">
+          <div class="card-body">
+            ${item.text.map((text, idx) => `
+              <div class="mb-3">
+                <div class="d-flex align-items-start">
+                  ${item.chatIds.length > 1 ? `<input type="checkbox" class="mr-2 tab2Checkbox">` : ''}
+                  <p class="flex-grow-1 text-container">${text}</p>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input type="text" class="form-control mr-2" value="${item.chatIds[idx]}" readonly>
+                  <button class="btn btn-secondary copyBtn" data-clipboard-text="${item.chatIds[idx]}">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    addEventListeners();
+  }
+
+  // Filter cards based on search input (title + content)
+  function filterCardsBySearch() {
+    const searchTerm = searchInput.value.toLowerCase();
+    return data.filter(item => {
+      // Check if title or any content matches search term
+      return item.title.toLowerCase().includes(searchTerm) || 
+        item.text.some(text => text.toLowerCase().includes(searchTerm));
+    });
+  }
+
+  // Event listeners for deleting, editing, and collapsing
+  function addEventListeners() {
+    // Delete Card Event
+    const deleteButtons = document.querySelectorAll('.deleteCard');
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const index = parseInt(e.target.closest('.deleteCard').dataset.index, 10);
+        data.splice(index, 1); // Remove the card from data array
+        localStorage.setItem('page1Data', JSON.stringify(data)); // Update LocalStorage
+        renderCards(); // Re-render the cards
+      });
+    });
+
+    // Edit Card Title Event
+    const editButtons = document.querySelectorAll('.editTitle');
+    editButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        cardToEditIndex = parseInt(e.target.closest('.editTitle').dataset.index, 10);
+        const cardTitle = data[cardToEditIndex].title;
+        document.getElementById('newCardTitle').value = cardTitle;
+        $('#editTitleModal').modal('show');
+      });
+    });
+
+    // Save Edited Title Event
+    document.getElementById('saveTitleBtn').addEventListener('click', () => {
+      const newTitle = document.getElementById('newCardTitle').value;
+      if (newTitle) {
+        data[cardToEditIndex].title = newTitle;
+        localStorage.setItem('page1Data', JSON.stringify(data)); // Update LocalStorage
+        renderCards(); // Re-render the cards
+        $('#editTitleModal').modal('hide');
+      }
+    });
+
+    // Copy Button Event
+    const copyButtons = document.querySelectorAll('.copyBtn');
+    copyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const textToCopy = button.getAttribute('data-clipboard-text');
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          button.setAttribute('data-toggle', 'popover');
+          button.setAttribute('data-content', 'Copied!');
+          $(button).popover('show');
+          setTimeout(() => $(button).popover('hide'), 1000);
+        });
+      });
+    });
+
+    // Checklist Functionality for Tab 2 (Toggle Grayed-Out Text)
+    const checkboxes = document.querySelectorAll('.tab2Checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const isChecked = e.target.checked;
+        const textContainer = e.target.nextElementSibling; // Text container next to checkbox
+        if (isChecked) {
+          textContainer.classList.add('text-muted');
+          textContainer.style.textDecoration = 'line-through';
+        } else {
+          textContainer.classList.remove('text-muted');
+          textContainer.style.textDecoration = 'none';
+        }
+      });
+    });
+
+    // Toggle Collapse Event
+    const toggleButtons = document.querySelectorAll('.toggleCollapse');
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const targetId = button.dataset.target;
+        const collapseElement = document.querySelector(targetId);
+        collapseElement.classList.toggle('show');
+
+        // Change button icon based on state
+        const icon = button.querySelector('i');
+        if (collapseElement.classList.contains('show')) {
+          icon.classList.remove('fa-chevron-down');
+          icon.classList.add('fa-chevron-up');
+        } else {
+          icon.classList.remove('fa-chevron-up');
+          icon.classList.add('fa-chevron-down');
+        }
+      });
+    });
+  }
+
+  // Initial rendering of cards
+  renderCards();
+
+  // Search input event listener
+  searchInput.addEventListener('input', () => renderCards());
+});
+</script>
+</body>
+</html>
