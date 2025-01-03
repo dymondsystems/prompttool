@@ -155,14 +155,21 @@ document.addEventListener('DOMContentLoaded', () => {
 copyButtons.forEach(button => {
   button.addEventListener('click', () => {
     const textToCopy = button.getAttribute('data-clipboard-text');
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      $(button).popover('show'); // Show the popover
-      setTimeout(() => $(button).popover('hide'), 1000); // Hide after 1 second
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
+    
+    try {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        alert('Copied to clipboard: ' + textToCopy);
+      }).catch(err => {
+        console.error('Clipboard error:', err);
+        alert('Failed to copy text. Check permissions or frame settings.');
+      });
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('Copy failed due to browser restrictions.');
+    }
   });
 });
+
 
 // Initialize popovers for Bootstrap
 $(document).ready(() => {
