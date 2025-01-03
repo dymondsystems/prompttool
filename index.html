@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web App - Page 1</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<div class="container border mt-4 p-4">
+  <!-- Top Button -->
+  <button class="btn btn-primary mb-4" data-toggle="modal" data-target="#copyModal">Open Modal</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="copyModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Content Box</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <textarea id="modalContent" class="form-control" rows="4"></textarea>
+          <button class="btn btn-secondary mt-2" id="copyButton">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs" id="tabMenu">
+    <li class="nav-item"><a class="nav-link active" href="#tab1" data-toggle="tab">Tab 1</a></li>
+    <li class="nav-item"><a class="nav-link" href="#tab2" data-toggle="tab">Tab 2</a></li>
+    <li class="nav-item"><a class="nav-link" href="#tab3" data-toggle="tab">Tab 3</a></li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content mt-3">
+    <!-- Tab 1 -->
+    <div class="tab-pane fade show active" id="tab1">
+      <input type="text" class="form-control mb-2" id="tab1Title" placeholder="Enter Title">
+      <textarea class="form-control mb-2" id="tab1Input" rows="4" placeholder="Enter text"></textarea>
+      <button class="btn btn-primary" id="tab1Generate">Generate</button>
+    </div>
+
+    <!-- Tab 2 -->
+    <div class="tab-pane fade" id="tab2">
+      <input type="text" class="form-control mb-2" id="tab2Title" placeholder="Enter Title">
+      <div id="tab2Inputs">
+        <textarea class="form-control mb-2" rows="6" placeholder="Enter text"></textarea>
+      </div>
+      <button class="btn btn-secondary mb-2" id="addTab2Input">Add Another</button>
+      <br>
+      <button class="btn btn-primary" id="tab2Generate">Generate</button>
+    </div>
+
+    <!-- Tab 3 -->
+    <div class="tab-pane fade" id="tab3">
+      <div id="wizardPage1">
+        <textarea class="form-control mb-2" id="tab3Title" placeholder="Enter Title"></textarea>
+        <button class="btn btn-primary" id="nextWizardPage">Next</button>
+      </div>
+      
+      
+      <div id="wizardPage2" class="d-none">
+        <div id="tab3Inputs">
+          <textarea class="form-control mb-2" rows="6" placeholder="Enter text"></textarea>
+        </div>
+        <button class="btn btn-secondary mb-2" id="addWizardInput">Add More</button>
+        <button class="btn btn-primary" id="nextWizardPage2">Next</button>
+      </div>
+      
+      
+      
+      <div id="wizardPage3" class="d-none">
+        <button class="btn btn-primary" id="tab3Generate">Generate</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="app.js"></script>
+
+<script>
+// Utility function to generate a unique chat ID
+function generateChatId() {
+  return `chatid#${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+// Save data to LocalStorage
+function saveDataToLocalStorage(title, text, chatIds) {
+  const data = JSON.parse(localStorage.getItem('page1Data')) || [];
+  data.push({ title, text, chatIds });
+  localStorage.setItem('page1Data', JSON.stringify(data));
+}
+
+// Tab 1 Generate Button
+document.getElementById('tab1Generate').addEventListener('click', () => {
+  const title = document.getElementById('tab1Title').value.trim();
+  const input = document.getElementById('tab1Input').value.trim();
+  if (!title || !input) return alert('Please fill out the title and text.');
+
+  const chatId = generateChatId();
+  const output = `(${chatId} ${input})`;
+
+  saveDataToLocalStorage(title, [input], [chatId]);
+
+  showOutputModal(output);
+});
+
+
+
+// Tab 2 Generate Button
+document.getElementById('tab2Generate').addEventListener('click', () => {
+  const title = document.getElementById('tab2Title').value.trim();
+  const inputs = Array.from(document.querySelectorAll('#tab2Inputs textarea')).map(input => input.value.trim());
+  if (!title || inputs.some(input => !input)) return alert('Please fill out all fields.');
+
+  const chatIds = inputs.map(() => generateChatId());
+  const outputs = inputs.map((input, index) => `(${chatIds[index]} ${input})`).join('\n');
+
+  saveDataToLocalStorage(title, inputs, chatIds);
+
+  showOutputModal(outputs);
+});
+
+// Tab 3 Wizard Navigation
+document.getElementById('nextWizardPage').addEventListener('click', () => {
+  document.getElementById('wizardPage1').classList.add('d-none');
+  document.getElementById('wizardPage2').classList.remove('d-none');
+});
+
+document.getElementById('nextWizardPage2').addEventListener('click', () => {
+  document.getElementById('wizardPage2').classList.add('d-none');
+  document.getElementById('wizardPage3').classList.remove('d-none');
+});
+
+document.getElementById('addWizardInput').addEventListener('click', () => {
+  const newInput = document.createElement('textarea');
+  newInput.className = 'form-control mb-2';
+  newInput.placeholder = 'Enter text';
+  document.getElementById('tab3Inputs').appendChild(newInput);
+});
+
+// Tab 3 Generate Button
+document.getElementById('tab3Generate').addEventListener('click', () => {
+  const title = document.getElementById('tab3Title').value.trim();
+  const inputs = Array.from(document.querySelectorAll('#tab3Inputs textarea')).map(input => input.value.trim());
+  if (!title || inputs.some(input => !input)) return alert('Please fill out all fields.');
+
+  const chatId = generateChatId();
+  const outputs = inputs.map(input => `(${chatId} ${input})`).join('\n');
+
+  saveDataToLocalStorage(title, inputs, [chatId]);
+
+  showOutputModal(outputs);
+});
+
+// Show Output Modal
+function showOutputModal(content) {
+  const modalContent = document.getElementById('modalContent');
+  modalContent.value = content;
+  $('#copyModal').modal('show');
+}
+
+// Copy Button in Modal
+document.getElementById('copyButton').addEventListener('click', () => {
+  const modalContent = document.getElementById('modalContent');
+  modalContent.select();
+  document.execCommand('copy');
+
+  const copyButton = document.getElementById('copyButton');
+  $(copyButton).attr('data-toggle', 'popover');
+  $(copyButton).attr('data-content', 'Copied!');
+  $(copyButton).popover('show');
+  setTimeout(() => $(copyButton).popover('hide'), 1000);
+});
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let tab2Counter = 0; // Counter for Tab 2 inputs
+  let tab3Counter = 0; // Counter for Tab 3 inputs
+
+  // Add new input in Tab 2
+  document.getElementById("addTab2Input").addEventListener("click", () => {
+    const container = document.getElementById("tab2Inputs");
+    const newInput = document.createElement("div");
+    newInput.className = "input-group mb-2";
+    newInput.innerHTML = `
+      <textarea class="form-control" rows="2"></textarea>
+      <div class="input-group-append">
+        <button class="btn btn-danger removeInput" type="button">Remove</button>
+      </div>
+    `;
+    container.appendChild(newInput);
+
+    // Add remove functionality
+    newInput.querySelector(".removeInput").addEventListener("click", () => {
+      newInput.remove();
+    });
+  });
+
+  // Add new input in Tab 3 (Page 2)
+  document.getElementById("addTab3Input").addEventListener("click", () => {
+    const container = document.getElementById("tab3Inputs");
+    const newInput = document.createElement("div");
+    newInput.className = "input-group mb-2";
+    newInput.innerHTML = `
+      <textarea class="form-control" rows="20"></textarea>
+      <div class="input-group-append">
+        <button class="btn btn-danger removeInput" type="button">Remove</button>
+      </div>
+    `;
+    container.appendChild(newInput);
+
+    // Add remove functionality
+    newInput.querySelector(".removeInput").addEventListener("click", () => {
+      newInput.remove();
+    });
+  });
+
+  // Handle Tab 3 Wizard
+  document.getElementById("nextTab3Pane").addEventListener("click", () => {
+    // Handle navigation to the second pane
+  });
+
+  // Adjust other tab functionality as needed...
+});
+
+</script>
+</body>
+</html>
+
+
+
+page 2
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web App - Page 2</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<div class="container mt-4">
+  <h1 class="mb-4">Stored Data</h1>
+
+  <!-- Card Container -->
+  <div id="cardsContainer">
+    <!-- Cards will be dynamically added here -->
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+// Load data from LocalStorage and populate cards
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('cardsContainer');
+  const data = JSON.parse(localStorage.getItem('page1Data')) || [];
+
+  function renderCards() {
+    container.innerHTML = ''; // Clear the container
+    data.forEach((item, index) => {
+      // Create card structure
+      const cardId = `cardContent${index}`; // Unique ID for collapse content
+      const card = document.createElement('div');
+      card.className = 'card mb-3';
+      card.innerHTML = `
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>${item.title}</h5>
+          <div>
+            <button class="btn btn-primary btn-sm toggleCollapse" data-target="#${cardId}">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="btn btn-danger btn-sm deleteCard" data-index="${index}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+        <div id="${cardId}" class="collapse">
+          <div class="card-body">
+            ${item.text.map((text, idx) => `
+              <div class="mb-3">
+                <div class="d-flex align-items-start">
+                  ${item.chatIds.length > 1 ? `<input type="checkbox" class="mr-2 tab2Checkbox">` : ''}
+                  <p class="flex-grow-1 text-container">${text}</p>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input type="text" class="form-control mr-2" value="${item.chatIds[idx]}" readonly>
+                  <button class="btn btn-secondary copyBtn" data-clipboard-text="${item.chatIds[idx]}">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    addEventListeners();
+  }
+  
+
+  function addEventListeners() {
+    // Delete Card Event
+    const deleteButtons = document.querySelectorAll('.deleteCard');
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const index = parseInt(e.target.closest('.deleteCard').dataset.index, 10);
+        data.splice(index, 1); // Remove the card from data array
+        localStorage.setItem('page1Data', JSON.stringify(data)); // Update LocalStorage
+        renderCards(); // Re-render the cards
+      });
+    });
+
+    // Copy Button Event
+    const copyButtons = document.querySelectorAll('.copyBtn');
+    copyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const textToCopy = button.getAttribute('data-clipboard-text');
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          button.setAttribute('data-toggle', 'popover');
+          button.setAttribute('data-content', 'Copied!');
+          $(button).popover('show');
+          setTimeout(() => $(button).popover('hide'), 1000);
+        });
+      });
+    });
+
+    // Checklist Functionality for Tab 2 (Toggle Grayed-Out Text)
+    const checkboxes = document.querySelectorAll('.tab2Checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const isChecked = e.target.checked;
+        const textContainer = e.target.nextElementSibling; // Text container next to checkbox
+        if (isChecked) {
+          textContainer.classList.add('text-muted');
+          textContainer.style.textDecoration = 'line-through';
+        } else {
+          textContainer.classList.remove('text-muted');
+          textContainer.style.textDecoration = 'none';
+        }
+      });
+    });
+
+    // Toggle Collapse Event
+    const toggleButtons = document.querySelectorAll('.toggleCollapse');
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const targetId = button.dataset.target;
+        const collapseElement = document.querySelector(targetId);
+        collapseElement.classList.toggle('show');
+
+        // Change button icon based on state
+        const icon = button.querySelector('i');
+        if (collapseElement.classList.contains('show')) {
+          icon.classList.remove('fa-chevron-down');
+          icon.classList.add('fa-chevron-up');
+        } else {
+          icon.classList.remove('fa-chevron-up');
+          icon.classList.add('fa-chevron-down');
+        }
+      });
+    });
+  }
+
+  renderCards();
+});
+
+
+
+</script>
+
+
+</body>
+</html>
+
+
