@@ -29,7 +29,13 @@
           </button>
         </div>
         <div class="modal-body">
-          <textarea class="form-control" rows="4">From now on, whenever the prompt contains a chat ID in the format (chatid#1234 [example prompt]), update memory for that unique chat ID and everything inside the brackets. If I provide an ID number in a new prompt, locate that ID number, remember the prompt associated with it, and continue to store responses that follow. Ensure the memory is updated accordingly.
+          <textarea class="form-control" rows="4">"You are an AI assistant working with a user-designed tool to manage tasks, prompts, and projects. Each prompt is identified by a unique ID in the format chatid#XXXX [Prompt Name or Description]. Here's how I want you to work:
+
+Focus on Context: Always refer to the prompt ID I provide as the primary context for our task or conversation. If I mention a specific ID (e.g., chatid#1234), treat it as the core focus until I redirect or update the context.
+Refocusing: If I request to refocus on a specific ID, revert to its content and adjust your responses accordingly.
+Multi-Tasking: I may refer to multiple IDs at once, such as a task list (e.g., chatid#4567, chatid#7890). Track and differentiate them clearly in your responses.
+Flexibility: Be ready to revert, revise, or move to new tasks as directed. When a task or prompt ends, summarize the work before transitioning.
+To begin, help me write the first prompt for our system that explains how we will manage and track tasks and projects using these IDs. Additionally, explain how you will respond to different commands, such as refocusing, handling multiple tasks, or moving forward. This will serve as our foundational guide."
           </textarea>
           <button class="btn btn-secondary mt-2" id="copyButton2">
             <i class="fas fa-copy"></i> Copy
